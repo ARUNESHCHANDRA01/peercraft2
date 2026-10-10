@@ -13,7 +13,7 @@ export default function App() {
   const [currentStudent, setCurrentStudent] = useState(null);
   const [selectedStudentForDetail, setSelectedStudentForDetail] = useState(null);
   const [isHealthModalOpen, setIsHealthModalOpen] = useState(false);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {

@@ -117,9 +117,9 @@
       "availability": "10 hrs/week (Weekends)",
       "github": "https://github.com/rohan-designs",
       "portfolio": "https://rohanverma.design",
-      "campusCredits": 200,
+      "campusCredits": 225,
       "reputationScore": 4.9,
-      "collaborationsCompleted": 6,
+      "collaborationsCompleted": 7,
       "joinedAt": "2025-09-01T10:00:00.000Z"
     },
     {
@@ -338,6 +338,17 @@
       "idempotencyKey": "review-earn-rev-1791615966415",
       "status": "CONFIRMED",
       "timestamp": "2026-10-10T07:06:06.415Z"
+    },
+    {
+      "id": "tx-1791631004270-m7bzn",
+      "studentId": "stu-103",
+      "amount": 25,
+      "type": "EARN",
+      "category": "PEER_REVIEW_MILESTONE",
+      "description": "Earned for verified peer review on project \"Automated Review Test\"",
+      "idempotencyKey": "review-earn-rev-1791631004269",
+      "status": "CONFIRMED",
+      "timestamp": "2026-10-10T11:16:44.270Z"
     }
   ],
   "reputationReviews": [
@@ -384,6 +395,17 @@
       "comment": "Outstanding UI prototyping work and attention to detail.",
       "verifiedMilestone": "Sprint 1 Verification",
       "timestamp": "2026-10-10T07:06:06.415Z"
+    },
+    {
+      "id": "rev-1791631004269",
+      "reviewerId": "stu-102",
+      "reviewerName": "Sneha Patel",
+      "recipientId": "stu-103",
+      "projectTitle": "Automated Review Test",
+      "rating": 4.9,
+      "comment": "Outstanding UI prototyping work and attention to detail.",
+      "verifiedMilestone": "Sprint 1 Verification",
+      "timestamp": "2026-10-10T11:16:44.269Z"
     }
   ]
 }

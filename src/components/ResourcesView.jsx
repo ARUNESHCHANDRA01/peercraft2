@@ -6,7 +6,8 @@ import {
   Download, 
   ThumbsUp, 
   Coins, 
-  X 
+  X,
+  AlertCircle
 } from 'lucide-react';
 import { api } from '../api.js';
 
@@ -62,7 +63,7 @@ export default function ResourcesView({
       const res = await api.upvoteResource(id);
       if (res.success) {
         setResources(resources.map((r) => (r.id === id ? res.data : r)));
-        onShowToast('Resource upvoted!');
+        onShowToast('Resource upvoted! Thanks for helping curate quality notes.');
       }
     } catch (err) {
       onShowToast(err.message || 'Error upvoting resource');
@@ -74,7 +75,7 @@ export default function ResourcesView({
       const res = await api.downloadResource(id);
       if (res.success) {
         setResources(resources.map((r) => (r.id === id ? res.data : r)));
-        onShowToast(`Downloaded "${title}". Happy learning!`);
+        onShowToast(`Opened "${title}". Happy learning!`);
       }
     } catch (err) {
       onShowToast(err.message || 'Download error');
@@ -84,7 +85,7 @@ export default function ResourcesView({
   async function handleCreateResource(e) {
     e.preventDefault();
     if (!newTitle.trim() || !newDescription.trim()) {
-      setFormError('Title and description are required.');
+      setFormError('Both title and description are required.');
       return;
     }
 
@@ -124,19 +125,19 @@ export default function ResourcesView({
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       {/* Header */}
-      <div className="glass-panel" style={{ padding: '2rem 2.5rem', background: 'var(--gradient-surface)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
+      <div className="card" style={{ padding: '1.75rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.25rem', borderLeft: '4px solid var(--color-secondary)' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-            <div style={{ padding: '0.5rem', borderRadius: '12px', background: 'var(--color-primary-glow)', color: 'var(--color-secondary)' }}>
-              <BookOpen size={24} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.35rem' }}>
+            <div style={{ padding: '0.45rem', borderRadius: '10px', background: 'var(--color-secondary-subtle)', color: 'var(--color-secondary)' }}>
+              <BookOpen size={22} />
             </div>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Resource Exchange</h1>
-            <span className="badge badge-emerald">+15 Credits / Upload</span>
+            <h1 style={{ fontSize: '1.65rem', fontWeight: 800 }}>Resource Exchange</h1>
+            <span className="badge badge-emerald">+15 Credits per Contribution</span>
           </div>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '650px', fontSize: '0.95rem' }}>
-            Share verified course notes, exam study guides, and development templates with college peers. Contributing resources awards real Campus Credits!
+          <p style={{ color: 'var(--text-secondary)', maxWidth: '650px', fontSize: '0.92rem' }}>
+            Discover and share verified course notes, exam study guides, and development templates. Contributing verified materials directly awards Campus Credits!
           </p>
         </div>
 
@@ -146,44 +147,48 @@ export default function ResourcesView({
         </button>
       </div>
 
-      {/* Category Pills & Search */}
-      <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <form onSubmit={handleSearchSubmit} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+      {/* Search Bar & Category Tabs */}
+      <div className="card" style={{ padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        <form onSubmit={handleSearchSubmit} style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
           <Search size={18} color="var(--text-muted)" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search resources by keywords, topics, or course tags..."
-            style={{
-              flex: 1,
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              color: 'var(--text-primary)',
-              fontSize: '0.92rem',
-              fontFamily: 'var(--font-sans)',
-            }}
+            className="form-input"
+            style={{ border: 'none', background: 'transparent', boxShadow: 'none', minHeight: '36px', padding: 0 }}
           />
-          <button type="submit" className="btn btn-secondary" style={{ padding: '0.45rem 1rem', fontSize: '0.82rem' }}>
+          {search && (
+            <button
+              type="button"
+              onClick={() => { setSearch(''); loadResources(); }}
+              className="btn btn-ghost btn-sm"
+              style={{ padding: '0.2rem', minHeight: 'auto' }}
+              aria-label="Clear search"
+            >
+              <X size={16} />
+            </button>
+          )}
+          <button type="submit" className="btn btn-secondary btn-sm">
             Search
           </button>
         </form>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', overflowX: 'auto', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', overflowX: 'auto', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.65rem' }}>
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
+              className="btn btn-sm"
               style={{
-                padding: '0.35rem 0.85rem',
-                borderRadius: '9999px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                border: selectedCategory === cat ? '1px solid var(--color-primary-light)' : '1px solid var(--border-subtle)',
-                background: selectedCategory === cat ? 'var(--color-primary-glow)' : 'var(--bg-surface-elevated)',
-                color: selectedCategory === cat ? 'var(--color-primary-light)' : 'var(--text-secondary)',
-                cursor: 'pointer',
+                padding: '0.25rem 0.75rem',
+                minHeight: '30px',
+                fontSize: '0.78rem',
+                background: selectedCategory === cat ? 'var(--color-primary-subtle)' : 'var(--bg-surface-elevated)',
+                borderColor: selectedCategory === cat ? 'var(--color-primary-border)' : 'var(--border-subtle)',
+                color: selectedCategory === cat ? 'var(--color-primary)' : 'var(--text-secondary)',
+                fontWeight: selectedCategory === cat ? 700 : 500,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -196,59 +201,67 @@ export default function ResourcesView({
       {/* Resource Cards Grid */}
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '1rem' }}>
-          <div style={{ width: '40px', height: '40px', border: '3px solid var(--border-subtle)', borderTopColor: 'var(--color-secondary)', borderRadius: '50%' }} className="animate-spin" />
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Fetching campus resources...</p>
+          <div style={{ width: '36px', height: '36px', border: '3px solid var(--border-subtle)', borderTopColor: 'var(--color-secondary)', borderRadius: '50%' }} className="animate-spin" />
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Fetching campus study resources...</p>
         </div>
       ) : error ? (
-        <div className="glass-panel" style={{ padding: '2.5rem', textAlign: 'center' }}>
-          <p style={{ color: 'var(--color-rose)', fontWeight: 600 }}>{error}</p>
-          <button className="btn btn-secondary" style={{ marginTop: '1rem' }} onClick={loadResources}>Retry</button>
+        <div className="card" style={{ padding: '2.5rem', textAlign: 'center' }}>
+          <AlertCircle size={32} color="var(--color-rose)" style={{ margin: '0 auto 0.75rem auto' }} />
+          <p style={{ color: 'var(--color-rose)', fontWeight: 600, marginBottom: '1rem' }}>{error}</p>
+          <button className="btn btn-secondary" onClick={loadResources}>Retry</button>
         </div>
       ) : resources.length === 0 ? (
-        <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>No learning resources found in this category.</p>
+        <div className="card" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+            {search ? `No learning resources match "${search}".` : `No learning resources found in "${selectedCategory}".`}
+          </p>
+          <button 
+            className="btn btn-secondary btn-sm" 
+            onClick={() => { setSearch(''); setSelectedCategory('All'); }}
+          >
+            Reset Filters
+          </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.25rem' }}>
           {resources.map((item) => (
             <div
               key={item.id}
-              className="glass-panel"
+              className="card"
               style={{
-                padding: '1.75rem',
+                padding: '1.5rem',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '1rem',
-                position: 'relative',
+                gap: '0.85rem',
               }}
             >
               {/* Category & Reward Badge */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span className="badge badge-primary">{item.category}</span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--color-emerald)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                  <Coins size={13} /> +{item.creditsReward} CC Reward
+                <span style={{ fontSize: '0.75rem', color: 'var(--color-emerald)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                  <Coins size={12} /> +{item.creditsReward} CC Reward
                 </span>
               </div>
 
               {/* Title & Description */}
               <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.35rem' }}>{item.title}</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.35rem' }}>{item.title}</h3>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {item.description}
                 </p>
               </div>
 
               {/* Tags */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
                 {item.tags.map((tag) => (
-                  <span key={tag} style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: 'var(--bg-surface-elevated)', color: 'var(--text-muted)' }}>
+                  <span key={tag} className="badge badge-neutral" style={{ fontSize: '0.68rem' }}>
                     #{tag}
                   </span>
                 ))}
               </div>
 
-              {/* Meta Attribution & Action Bar */}
-              <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {/* Metadata & Actions */}
+              <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '0.85rem', marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                   <span>Contributed by {item.authorName}</span>
                   <span>{new Date(item.createdAt).toLocaleDateString()}</span>
@@ -258,13 +271,14 @@ export default function ResourcesView({
                   <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                     <button
                       onClick={() => handleUpvote(item.id)}
+                      title="Upvote this resource"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '0.3rem',
+                        gap: '0.25rem',
                         background: 'transparent',
                         border: 'none',
-                        color: 'var(--color-primary-light)',
+                        color: 'var(--color-primary)',
                         cursor: 'pointer',
                         fontWeight: 600,
                       }}
@@ -272,15 +286,14 @@ export default function ResourcesView({
                       <ThumbsUp size={14} />
                       <span>{item.upvotes}</span>
                     </button>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                       <Download size={14} />
                       <span>{item.downloads}</span>
                     </span>
                   </div>
 
                   <button
-                    className="btn btn-secondary"
-                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                    className="btn btn-secondary btn-sm"
                     onClick={() => handleDownload(item.id, item.title)}
                   >
                     <Download size={13} />
@@ -295,53 +308,36 @@ export default function ResourcesView({
 
       {/* Contribute Resource Modal */}
       {isModalOpen && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.75)',
-          backdropFilter: 'blur(6px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          padding: '1.5rem',
-        }}>
-          <div className="glass-panel" style={{ maxWidth: '540px', width: '100%', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ padding: '1.75rem', gap: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Contribute Learning Resource</h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--color-emerald)', fontWeight: 600 }}>Earns +15 Campus Credits upon publication</p>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800 }}>Contribute Study Resource</h3>
+                <p style={{ fontSize: '0.78rem', color: 'var(--color-emerald)', fontWeight: 600 }}>Earns +15 Campus Credits upon publication</p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+              <button onClick={() => setIsModalOpen(false)} aria-label="Close" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateResource} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                  Resource Title *
-                </label>
+            <form onSubmit={handleCreateResource} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div className="form-group">
+                <label className="form-label">Resource Title *</label>
                 <input
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="e.g., Operating Systems Memory Management Revision Notes"
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.88rem' }}
+                  placeholder="e.g. Operating Systems Memory Management Revision Notes"
+                  className="form-input"
                 />
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                  Category *
-                </label>
+              <div className="form-group">
+                <label className="form-label">Category *</label>
                 <select
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.88rem' }}
+                  className="form-select"
                 >
                   {CATEGORIES.filter((c) => c !== 'All').map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -349,40 +345,34 @@ export default function ResourcesView({
                 </select>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                  Description *
-                </label>
+              <div className="form-group">
+                <label className="form-label">Description *</label>
                 <textarea
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  placeholder="Describe the topics covered, helpful formulas, or templates included..."
+                  placeholder="Describe the topics covered, helpful formulas, or practice problems included..."
                   rows={3}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.88rem' }}
+                  className="form-textarea"
                 />
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                  Tags (comma separated)
-                </label>
+              <div className="form-group">
+                <label className="form-label">Tags (comma separated)</label>
                 <input
                   type="text"
                   value={newTags}
                   onChange={(e) => setNewTags(e.target.value)}
                   placeholder="e.g. OS, Paging, Virtual Memory"
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.88rem' }}
+                  className="form-input"
                 />
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-secondary)' }}>
-                  Document Format
-                </label>
+              <div className="form-group">
+                <label className="form-label">Document Format</label>
                 <select
                   value={newFileType}
                   onChange={(e) => setNewFileType(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.88rem' }}
+                  className="form-select"
                 >
                   <option value="PDF Document">PDF Document</option>
                   <option value="Markdown Guide">Markdown Guide</option>
@@ -395,11 +385,11 @@ export default function ResourcesView({
                 <div style={{ color: 'var(--color-rose)', fontSize: '0.82rem' }}>{formError}</div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setIsModalOpen(false)}>
                   Cancel
                 </button>
-                <button type="submit" disabled={submitting} className="btn btn-primary">
+                <button type="submit" disabled={submitting} className="btn btn-primary btn-sm">
                   {submitting ? 'Publishing...' : 'Publish & Earn +15 CC'}
                 </button>
               </div>

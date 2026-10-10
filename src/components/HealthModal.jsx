@@ -36,23 +36,11 @@ export default function HealthModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0, 0, 0, 0.75)',
-      backdropFilter: 'blur(6px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1100,
-      padding: '1.5rem',
-    }}>
-      <div className="glass-panel" style={{ maxWidth: '520px', width: '100%', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative' }}>
+    <div className="modal-overlay">
+      <div className="modal-content" style={{ padding: '1.75rem', gap: '1.25rem', maxWidth: '480px' }}>
         <button
           onClick={onClose}
+          aria-label="Close"
           style={{
             position: 'absolute',
             top: '1.25rem',
@@ -66,13 +54,13 @@ export default function HealthModal({ isOpen, onClose }) {
           <X size={20} />
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ padding: '0.5rem', borderRadius: '12px', background: 'var(--color-emerald-glow)', color: 'var(--color-emerald)' }}>
-            <Activity size={22} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div style={{ padding: '0.45rem', borderRadius: '10px', background: 'var(--color-emerald-subtle)', color: 'var(--color-emerald)' }}>
+            <Activity size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>System Health & Diagnostics</h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Live platform & external service connectivity</p>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800 }}>Platform Diagnostics</h3>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Live connectivity and service health</p>
           </div>
         </div>
 
@@ -82,17 +70,17 @@ export default function HealthModal({ isOpen, onClose }) {
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.75rem' }}>Querying /api/health...</p>
           </div>
         ) : error ? (
-          <div style={{ padding: '1rem', borderRadius: 'var(--radius-sm)', background: 'rgba(244, 63, 94, 0.15)', color: 'var(--color-rose)', fontSize: '0.85rem' }}>
+          <div style={{ padding: '0.85rem', borderRadius: 'var(--radius-md)', background: 'var(--color-rose-subtle)', color: 'var(--color-rose)', fontSize: '0.85rem' }}>
             {error}
           </div>
         ) : health ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {/* Express Server */}
-            <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <Server size={18} color="var(--color-primary-light)" />
+            <div style={{ padding: '0.75rem 0.85rem', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <Server size={18} color="var(--color-primary)" />
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Express API Server</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>Express API Server</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     Uptime: {health.uptimeSeconds}s • Env: {health.environment}
                   </div>
@@ -102,15 +90,15 @@ export default function HealthModal({ isOpen, onClose }) {
             </div>
 
             {/* Storage Provider */}
-            <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ padding: '0.75rem 0.85rem', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <Database size={18} color="var(--color-secondary)" />
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Database & Storage Layer</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>Database & Storage Layer</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     {health.services.storage.provider}
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>
                     {health.services.storage.records.students} Students • {health.services.storage.records.resources} Resources
                   </div>
                 </div>
@@ -119,15 +107,15 @@ export default function HealthModal({ isOpen, onClose }) {
             </div>
 
             {/* Dify AI Workflow */}
-            <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ padding: '0.75rem 0.85rem', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <Sparkles size={18} color="var(--color-amber)" />
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Dify AI Workflow (PEERCRAFT)</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>Dify AI Workflow (PEERCRAFT)</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     Engine: {health.services.dify.engine}
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>
                     Endpoint: {health.services.dify.baseUrl}
                   </div>
                 </div>
@@ -139,12 +127,12 @@ export default function HealthModal({ isOpen, onClose }) {
           </div>
         ) : null}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
-          <button className="btn btn-secondary" onClick={loadHealth} style={{ fontSize: '0.8rem', padding: '0.45rem 0.85rem' }}>
-            <RefreshCw size={14} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.35rem' }}>
+          <button className="btn btn-secondary btn-sm" onClick={loadHealth}>
+            <RefreshCw size={13} />
             <span>Re-check</span>
           </button>
-          <button className="btn btn-primary" onClick={onClose} style={{ fontSize: '0.8rem', padding: '0.45rem 1rem' }}>
+          <button className="btn btn-primary btn-sm" onClick={onClose}>
             Close
           </button>
         </div>
